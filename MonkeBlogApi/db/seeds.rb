@@ -7,3 +7,9 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 user = User.create(username: "monke", password: "password", age: 13, email: "monke@gmail.com")
+
+category = Category.create(name: "some category")
+
+post = Post.create(title: "some post", category_id: category.id, user_id: user.id, text: "some text")
+
+comment = Comment.create(text: "some teeext", post_id: 1, user_id: 1)
