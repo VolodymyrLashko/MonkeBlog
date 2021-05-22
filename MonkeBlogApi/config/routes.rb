@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :comments
+  resources :post_tags
+  resources :tags
   get "/categories", to: "category#index"
   resources :categories
   resources :posts

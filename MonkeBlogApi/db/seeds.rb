@@ -6,9 +6,13 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-user = User.create(username: "monke", password: "password", age: 13, email: "monke@gmail.com")
+user = User.create(username: "admin", password: "admin", age: 13, email: "monke@gmail.com")
 
 category = Category.create(name: "some category")
+
+tag = Tag.create(name: "some tag")
+
+post_tag = PostTag.create(post_id: 1, tag_id: 1)
 
 post = Post.create(title: "some post", category_id: category.id, user_id: user.id, text: "some text")
 
