@@ -17,7 +17,8 @@ export const actions = {
     let JWTToken = localStorage.getItem("token");
 
     const posts = await this.$axios.$get("/posts",
-      { headers: { "Authorization": `Bearer ${JWTToken}` } });
+      { headers: { "Authorization": `Bearer ${JWTToken}` } })
+
     commit("setPosts", { posts })
   },
 

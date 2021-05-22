@@ -1,14 +1,21 @@
 <template>
   <div>
+    <filter-menu
+      :categories="this.categories"
+      :tags="this.tags"
+      class="posts-div body-1"
+    ></filter-menu>
+
     <div class="d-flex justify-center text-h2">All posts</div>
 
-    <div class="posts-div body-1" v-if="this.posts">
+    <div class="body-1" v-if="this.posts">
       <v-card
         v-for="post in this.posts"
         :key="post.id + post"
         class="mx-auto mt-5 rounded-xl pa-5"
-        max-width="30em"
+        width="40em"
         color="dark"
+        
       >
         <div class="text-h4">{{ post.title }}</div>
         <div>Created by - {{ post.user.username }}</div>
@@ -21,9 +28,12 @@
         </div>
 
         <v-divider class="mb-3" />
-        
 
-        <comment-list :postid="post.id" :comments="post.comments"></comment-list>
+        <comment-list
+          :postid="post.id"
+          :comments="post.comments"
+          :likes="post.likes"
+        ></comment-list>
       </v-card>
     </div>
     <button @click="log"></button>
@@ -33,6 +43,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import CommentList from "../components/comment-list";
+import FilterMenu from "../components/filter-menu";
 
 export default {
   data() {
@@ -42,16 +53,21 @@ export default {
   },
   computed: {
     ...mapState("posts", ["posts"]),
-    
+    ...mapState("tag", ["tags"]),
+    ...mapState("category", ["categories"]),
   },
   created() {
     this.fetchData();
   },
   methods: {
     ...mapActions("posts", ["fetchPosts"]),
+    ...mapActions("category", ["fetchCategories"]),
+    ...mapActions("tag", ["fetchTags"]),
+
     async fetchData() {
       this.fetchPosts();
-      // this.posts = await this.$axios.$get("/posts");
+      this.fetchCategories();
+      this.fetchTags();
     },
     commentIdFactory(c) {
       return `comment-${c.id}`;
@@ -61,8 +77,9 @@ export default {
     },
   },
   components: {
-    CommentList
-  }
+    CommentList,
+    FilterMenu,
+  },
 };
 </script>
 
