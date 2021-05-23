@@ -6,7 +6,7 @@
         <h3>Categories</h3>
         <v-select
           class="mt-4 py-0"
-          v-model="selectedCategoy"
+          v-model="selectedCategory"
           :items="selectCategories"
           outlined
           label="Category"
@@ -28,19 +28,19 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <v-btn  @click="postCom" dense depressed color="primary">
-        Search
-      </v-btn>
+      <v-btn @click="loadPosts" dense depressed color="primary"> Search </v-btn>
     </v-row>
   </v-card>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {
       selectedTags: [],
-      selectedCategoy: "",
+      selectedCategory: "",
     };
   },
   props: {
@@ -59,6 +59,15 @@ export default {
         text: x.name,
         value: x.id,
       }));
+    },
+  },
+  methods: {
+    ...mapActions("posts", ["searchByCategoryAndTags"]),
+    loadPosts() {
+      this.searchByCategoryAndTags({
+        category: this.selectedCategory,
+        tags: this.selectedTags,
+      });
     },
   },
 };

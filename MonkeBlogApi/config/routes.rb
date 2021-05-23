@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "/find_posts", to: "posts#findPosts"
   resources :post_likes
   resources :likes
   resources :comments

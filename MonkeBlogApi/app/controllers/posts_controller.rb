@@ -9,6 +9,37 @@ class PostsController < ApplicationController
     render json: @posts
   end
 
+  def findPosts
+    tags = params[:tags]
+    category = params[:category]
+
+    # render json: { category: category, tags: tags }
+    # return
+
+    if tags != nil && category != ""
+      tmp = PostTag.where(tag_id: tags).pluck(:post_id)
+
+      @posts = Post.where(id: tmp, category_id: category)
+
+      render json: @posts
+      return
+    elsif tags != nil
+      tmp = PostTag.where(tag_id: tags).pluck(:post_id)
+
+      @posts = Post.where(id: tmp)
+
+      render json: @posts
+      return
+    elsif category != ""
+      @posts = Post.where(category_id: category)
+
+      render json: @posts
+      return
+    end
+    @posts = Post.all().sort { |a, b| b.created_at <=> a.created_at }
+    render json: @posts
+  end
+
   # GET /posts/1
   def show
     render json: @post

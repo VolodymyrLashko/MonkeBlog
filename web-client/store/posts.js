@@ -23,9 +23,7 @@ export const actions = {
   },
 
   createPost({ dispatch }, { post }) {
-    const JWTToken = localStorage.getItem("token");
 
-    console.log(post);
 
     this.$axios
       .$post("/posts", post, {
@@ -35,5 +33,25 @@ export const actions = {
         dispatch('tag/postTags',
           { tags: post.tags, postId: res.id }, { root: true })
       });
+  },
+
+  async searchByCategoryAndTags({ commit }, { category, tags }) {
+    const JWTToken = localStorage.getItem("token");
+
+    const posts = await this.$axios.$get("/find_posts", {
+      headers: {
+        Authorization: `Bearer ${JWTToken}`,
+
+      },
+      params: {
+        category: category,
+        tags: tags
+      }
+    },
+    );
+
+    console.log(posts);
+
+    commit("setPosts", { posts })
   }
 }

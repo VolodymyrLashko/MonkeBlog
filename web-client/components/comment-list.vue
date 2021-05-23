@@ -91,7 +91,6 @@ export default {
   },
   beforeMount() {
     this.likeExist();
-    console.log("m2342342341");
   },
   methods: {
     ...mapActions("comments", ["postComment"]),
