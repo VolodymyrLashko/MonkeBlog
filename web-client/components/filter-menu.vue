@@ -27,25 +27,53 @@
         ></v-select>
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row class="d-flex justify-space-around">
       <v-btn @click="loadPosts" dense depressed color="primary"> Search </v-btn>
     </v-row>
   </v-card>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 
 export default {
   data() {
     return {
       selectedTags: [],
-      selectedCategory: "",
+      selectedCategory: ""
     };
   },
   props: {
     categories: Array,
     tags: Array,
+    isFiltered: Boolean
+  },
+  watch: {
+    selectedCategory:function(val) {
+      if(val === "" && selectedTags.length == 0) {
+        this.setFiltered({filtered: false})
+        console.log("categor false")
+      }
+      else{
+        this.setFiltered({filtered: true})
+        console.log("categor true")
+
+      }
+      this.setCategory({category: val})
+    },
+    selectedTags:function(val) {
+        console.log("categor", this.selectedCategory)
+        console.log("tags", val)
+      if(this.selectedCategory === "" && val.length == 0) {
+        this.setFiltered({filtered: false})
+        console.log("tags false")
+      }
+      else{
+        this.setFiltered({filtered: true})
+        console.log("tags true")
+      }
+      this.setTags({tags:val})
+    }
   },
   computed: {
     selectCategories() {
@@ -63,13 +91,16 @@ export default {
   },
   methods: {
     ...mapActions("posts", ["searchByCategoryAndTags"]),
+    ...mapMutations("global", ["setFiltered", "setCategory", "setTags"]),
     loadPosts() {
       this.searchByCategoryAndTags({
         category: this.selectedCategory,
         tags: this.selectedTags,
+        currPage: 1
       });
     },
   },
+
 };
 </script>
 

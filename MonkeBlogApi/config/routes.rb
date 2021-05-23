@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "/find_posts", to: "posts#findPosts"
+  get "/kapec", to: "posts#kapec"
   resources :post_likes
   resources :likes
   resources :comments

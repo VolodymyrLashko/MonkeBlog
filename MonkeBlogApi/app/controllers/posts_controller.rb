@@ -4,9 +4,22 @@ class PostsController < ApplicationController
   # GET /posts
   def index
     # @posts = Post.where(user_id: @user.id)
-    @posts = Post.all().sort { |a, b| b.created_at <=> a.created_at }
+    # @posts = Post.all()
+    #   .page(1)
+    #   .paginate(page: params[:page])
+    #   .order("created_at DESC")
+    # #.sort { |a, b| b.created_at <=> a.created_at }
 
-    render json: @posts
+    # render json: {
+    #   posts: @posts,
+    #   page: @posts.current_page,
+    #   pages: @posts.total_pages,
+    # }
+    @posts = Post.order("created_at DESC")
+      .paginate(:per_page => 12,
+                :page => params[:page])
+
+    render json: @posts, pages: @posts.total_pages
   end
 
   def findPosts
@@ -20,15 +33,19 @@ class PostsController < ApplicationController
       tmp = PostTag.where(tag_id: tags).pluck(:post_id)
 
       @posts = Post.where(id: tmp, category_id: category)
+        .paginate(:per_page => 12,
+                  :page => params[:page])
 
-      render json: @posts
+      render json: @posts, pages: @posts.total_pages
       return
     elsif tags != nil
       tmp = PostTag.where(tag_id: tags).pluck(:post_id)
 
       @posts = Post.where(id: tmp)
+        .paginate(:per_page => 12,
+                  :page => params[:page])
 
-      render json: @posts
+      render json: @posts, pages: @posts.total_pages
       return
     elsif category != ""
       @posts = Post.where(category_id: category)
@@ -36,8 +53,11 @@ class PostsController < ApplicationController
       render json: @posts
       return
     end
-    @posts = Post.all().sort { |a, b| b.created_at <=> a.created_at }
-    render json: @posts
+    @posts = Post.all()
+      .paginate(:per_page => 12,
+                :page => params[:page])
+      .order("created_at DESC")
+    render json: @posts, pages: @posts.total_pages
   end
 
   # GET /posts/1

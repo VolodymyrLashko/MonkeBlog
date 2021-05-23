@@ -1,10 +1,12 @@
 const initState = () => ({
-  loggedIn: tokenExist()
+  loggedIn: tokenExist(),
+  filtered: false,
+  category: "",
+  tags: ""
 })
 
 const tokenExist = () => {
   if (localStorage.getItem("token")) {
-    console.log(localStorage.getItem("token"))
     return true;
   }
   return false;
@@ -24,6 +26,15 @@ export const mutations = {
     localStorage.removeItem("user");
     state.loggedIn = false;
   },
+  setFiltered(state, {filtered}) {
+    state.filtered = filtered;
+  },
+  setCategory(state, {category}) {
+    state.category = category
+  },
+  setTags(state, {tags}) {
+    state.tags = tags
+  }
 }
 
 export const actions = {

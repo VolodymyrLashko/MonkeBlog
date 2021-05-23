@@ -1,41 +1,73 @@
 const initState = () => ({
-  posts: []
+  posts: [],
+  pages: 2,
+  page: 1
 })
 
+
+const getPagesFromPosts = (posts) => {
+
+  if (!posts)
+    return 0;
+  return posts[0].pages
+}
+
 export const state = initState;
+
+export const getters = {
+  getPage: state => state.page
+}
 
 export const mutations = {
   setPosts(state, { posts }) {
     state.posts = posts
+  },
+  setPages(state, { pages }) {
+    state.pages = pages;
+  },
+  setPage(state, {page}) {
+    state.page = page
   }
 }
 
 export const actions = {
 
-  async fetchPosts({ commit }) {
+  async fetchPosts({ commit, dispatch, getters }, { currPage }) {
+
+    let pg = currPage
+
+    if(currPage){
+      commit("setPage", {page: pg});
+    }
+    else {
+      pg = getters.getPage;     
+    }
 
     let JWTToken = localStorage.getItem("token");
 
-    const posts = await this.$axios.$get("/posts",
-      { headers: { "Authorization": `Bearer ${JWTToken}` } })
+    let posts = await this.$axios.$get(`/posts?page=${pg}`, {
+      headers: { "Authorization": `Bearer ${JWTToken}` }
+    })
 
-    commit("setPosts", { posts })
+    let numOfPages = getPagesFromPosts(posts)
+
+    commit("setPages", {pages: numOfPages})
+
+    commit("setPosts", {
+      posts: posts
+    })
   },
 
-  createPost({ dispatch }, { post }) {
+  async searchByCategoryAndTags({ commit }, { category, tags, currPage }) {
+    let pg = currPage
 
+    if(currPage){
+      commit("setPage", {page: pg});
+    }
+    else {
+      pg = getters.getPage;     
+    }
 
-    this.$axios
-      .$post("/posts", post, {
-        headers: { Authorization: `Bearer ${JWTToken}` },
-      })
-      .then((res) => {
-        dispatch('tag/postTags',
-          { tags: post.tags, postId: res.id }, { root: true })
-      });
-  },
-
-  async searchByCategoryAndTags({ commit }, { category, tags }) {
     const JWTToken = localStorage.getItem("token");
 
     const posts = await this.$axios.$get("/find_posts", {
@@ -45,13 +77,27 @@ export const actions = {
       },
       params: {
         category: category,
-        tags: tags
+        tags: tags,
+        page: pg
       }
     },
     );
+    commit("setPosts", {posts: posts})
 
-    console.log(posts);
+    let numOfPages = getPagesFromPosts(posts)
 
-    commit("setPosts", { posts })
-  }
+    commit("setPages", {pages: numOfPages})
+
+  },
+
+  createPost({ dispatch }, { post }) {
+    this.$axios
+      .$post("/posts", post, {
+        headers: { Authorization: `Bearer ${JWTToken}` },
+      })
+      .then((res) => {
+        dispatch('tag/postTags',
+          { tags: post.tags, postId: res.id }, { root: true })
+      });
+  },
 }

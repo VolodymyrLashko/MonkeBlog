@@ -4,6 +4,7 @@ class UsersController < ApplicationController
   # REGISTER
   def create
     @user = User.create(user_params)
+    @user.role_id = 1
     if @user.valid?
       token = encode_token({ user_id: @user.id })
       render json: { user: @user, token: token }

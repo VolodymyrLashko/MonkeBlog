@@ -8,6 +8,15 @@
 
     <div class="d-flex justify-center text-h2">All posts</div>
 
+    <v-container class="max-width">
+      <v-pagination
+        v-model="currPage"
+        class="my-4"
+        :length="this.pages"
+        @input="this.fetchData"
+      ></v-pagination>
+    </v-container>
+
     <div class="body-1" v-if="this.posts">
       <v-card
         v-for="post in this.posts"
@@ -15,7 +24,6 @@
         class="mx-auto mt-5 rounded-xl pa-5"
         width="40em"
         color="dark"
-        
       >
         <div class="text-h4">{{ post.title }}</div>
         <div>Created by - {{ post.user.username }}</div>
@@ -48,15 +56,17 @@ import FilterMenu from "../components/filter-menu";
 export default {
   data() {
     return {
-      message: "message",
+      currPage: 1,
+      isFiltered: false
     };
   },
   computed: {
-    ...mapState("posts", ["posts"]),
+    ...mapState("posts", ["posts", "pages"]),
     ...mapState("tag", ["tags"]),
     ...mapState("category", ["categories"]),
+    ...mapState("global", ["filtered"]),
   },
-  created() {
+  mounted() {
     this.fetchData();
   },
   methods: {
@@ -65,7 +75,7 @@ export default {
     ...mapActions("tag", ["fetchTags"]),
 
     async fetchData() {
-      this.fetchPosts();
+      this.fetchPosts({currPage: this.currPage});
       this.fetchCategories();
       this.fetchTags();
     },

@@ -4,15 +4,15 @@
       <v-col class="col-2 pa-0">
         <v-btn
           class="px-0 mt-7 d-flex justify-space-between"
-          v-if="likeButtonColor.liked"
           text
-          color="#E91E63"
+         
+          :color="likeButtonColor.liked?liked:unliked"
           @click="like"
         >
           <v-icon>mdi-heart</v-icon>
           {{ likes.length }}
         </v-btn>
-        <v-btn
+        <!-- <v-btn
           class="px-0 mt-7 d-flex justify-space-between"
           v-else
           text
@@ -21,7 +21,7 @@
         >
           <v-icon class="ml-1">mdi-heart</v-icon>
           {{ likes.length }}
-        </v-btn>
+        </v-btn> -->
       </v-col>
       <v-col class="col-8">
         <v-text-field
@@ -38,7 +38,6 @@
           </v-btn>
         </v-flex>
       </v-col>
-
     </v-row>
     <v-list three-line>
       <template v-for="(item, index) in comments">
@@ -84,45 +83,62 @@ export default {
       likeButtonColor: {
         liked: false,
       },
+      liked: "#E91E63",
+      unliked: "#FFFFFF"
     };
   },
   computed: {
     ...mapState("comments", ["fetchedComments"]),
+    ...mapState("global", ["filtered", "category", "tags"]),
   },
   beforeMount() {
     this.likeExist();
   },
   methods: {
     ...mapActions("comments", ["postComment"]),
-    ...mapActions("posts", ["fetchPosts"]),
+    ...mapActions("posts", ["fetchPosts", "searchByCategoryAndTags"]),
     ...mapActions("likes", ["postLikes", "deleteLikes"]),
-    postCom() {
+    async postCom() {
       this.postComment({ comment: this.comment, postId: this.postid });
-      this.fetchPosts();
+      await this.fetchPostsWrap();
     },
 
     async like() {
       let id = this.likeExist();
-      console.log(id)
       if (id) {
-        this.deleteLikes({id});
-        await this.fetchPosts();
+        this.deleteLikes({ id });
+        await this.fetchPostsWrap();
         this.likeExist();
       } else {
         await this.postLikes({ like: { post_id: this.postid } });
-        await this.fetchPosts();
+        await this.fetchPostsWrap();
         this.likeExist();
       }
     },
     likeExist() {
       let arr = this.likes.filter((e) => e.post_id === this.postid);
-
       if (arr.length > 0) {
         this.likeButtonColor.liked = true;
         return arr[0].id;
+
       } else {
         this.likeButtonColor.liked = false;
+    
         return false;
+      }
+
+    },
+    async fetchPostsWrap() {
+
+      if (this.filtered) {
+        await this.searchByCategoryAndTags({
+          category: this.category,
+          tags: this.tags,
+          currPage: 1,
+        });
+      }
+      else {
+        await this.fetchPosts({});
       }
     },
   },
