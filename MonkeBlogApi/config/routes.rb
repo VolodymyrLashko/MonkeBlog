@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get "/find_posts", to: "posts#findPosts"
+  get "/find_posts_title", to: "posts#findByTitle"
   get "/kapec", to: "posts#kapec"
+  delete "/posts", to: "posts#destroy"
   resources :post_likes
   resources :likes
   resources :comments

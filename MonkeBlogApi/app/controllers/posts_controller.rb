@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   before_action :set_post, only: [:show, :update, :destroy]
+  before_action :checkRole, only: [:update, :destroy]
 
   # GET /posts
   def index
@@ -60,6 +61,11 @@ class PostsController < ApplicationController
     render json: @posts, pages: @posts.total_pages
   end
 
+  def findByTitle
+    @posts = Post.where("title like ?", "%#{params[:title]}%")
+    render json: @posts
+  end
+
   # GET /posts/1
   def show
     render json: @post
@@ -93,6 +99,8 @@ class PostsController < ApplicationController
   # DELETE /posts/1
   def destroy
     @post.destroy
+
+    render json: { message: "Deleted" }
   end
 
   private
@@ -105,5 +113,12 @@ class PostsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def post_params
     params.require(:post).permit(:title, :text, :user_id, :category_id)
+  end
+
+  def checkRole
+    if @post.user_id != @user.id && @user.role_id != 1
+      render json: { message: "Access denied" }
+      return
+    end
   end
 end

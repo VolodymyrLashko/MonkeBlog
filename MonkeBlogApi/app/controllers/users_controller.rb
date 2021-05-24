@@ -3,7 +3,11 @@ class UsersController < ApplicationController
 
   # REGISTER
   def create
-    @user = User.create(user_params)
+    @user = User.create(username: params[:username],
+                        password: params[:password],
+                        email: params[:email],
+                        age: params[:age],
+                        role_id: 1)
     if @user.valid?
       token = encode_token({ user_id: @user.id })
       render json: { user: @user, token: token }

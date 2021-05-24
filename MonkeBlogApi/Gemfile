@@ -50,3 +50,5 @@ gem "will_paginate"
 # gem "pagy"
 
 gem "rack-cors"
+
+gem "pry", group: :development
