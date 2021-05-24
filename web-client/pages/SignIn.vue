@@ -44,7 +44,7 @@ export default {
     postData() {
 
       this.login({form: this.form});
-      this.$router.push("/");
+      //this.$router.push("/");
     },
   },
 };

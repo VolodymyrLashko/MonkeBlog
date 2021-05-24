@@ -19,23 +19,31 @@
 
     <div class="body-1" v-if="this.posts">
       <v-card
-        v-for="post in this.posts"
-        :key="post.id + post"
+        v-for="(post, i) in this.posts"
+        :key="post.id + i *post.id"
         class="mx-auto mt-5 rounded-xl pa-5"
         width="40em"
         color="dark"
       >
-        <div class="text-h4">{{ post.title }}</div>
-        <div>Created by - {{ post.user.username }}</div>
-        <div>Category - {{ post.category.name }}</div>
+        <div class="text-h4 text-center">{{ post.title }}</div>
+        <div class="d-flex justify-space-between">
+          <div>Created by - {{ post.user.username }}</div>
+          <div>Category - {{ post.category.name }}</div>
+        </div>
 
-        <v-divider />
+  <v-divider class="my-2"></v-divider>
 
         <div>
           <p>{{ post.text }}</p>
         </div>
 
-        <v-divider class="mb-3" />
+        <v-divider class="mb-2" />
+        <div class="d-flex justify-center">
+          <v-chip class="mx-1" small v-for="(tag, i) in post.tags" :key="tag + i">
+            Default
+          </v-chip>
+        </div>
+        <v-divider class="mt-2" />
 
         <comment-list
           :postid="post.id"
@@ -57,7 +65,7 @@ export default {
   data() {
     return {
       currPage: 1,
-      isFiltered: false
+      isFiltered: false,
     };
   },
   computed: {
@@ -75,7 +83,7 @@ export default {
     ...mapActions("tag", ["fetchTags"]),
 
     async fetchData() {
-      this.fetchPosts({currPage: this.currPage});
+      this.fetchPosts({ currPage: this.currPage });
       this.fetchCategories();
       this.fetchTags();
     },

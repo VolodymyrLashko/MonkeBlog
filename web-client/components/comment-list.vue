@@ -1,5 +1,48 @@
 <template>
-  <v-card elevation="0" class="">
+  <div>
+    <div class="d-flex justify-left">
+      <v-btn
+        class="px-0 mt-3 d-flex justify-space-between"
+        text
+        :color="likeButtonColor.liked ? liked : unliked"
+        @click="like"
+      >
+        <v-icon>mdi-heart</v-icon>
+        {{ likes.length }}
+      </v-btn>
+
+      <v-text-field class="mx-4"
+        v-model="comment.text"
+        :counter="256"
+        label="Comment"
+        required
+      ></v-text-field>
+
+      <v-btn class="mt-3" @click="postCom" dense depressed color="primary">
+        Add
+      </v-btn>
+    </div>
+    <v-expansion-panels class="pa-0 ma-0" flat>
+      <v-expansion-panel class="pa-0 ma-0" v-for="(item, i) in 1" :key="i + item * item">
+        <v-expansion-panel-header>
+          <p class="text-subtitle-1">Comments [ {{ comments.length }} ]</p>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content class="pa-0 ma-0">
+          <div class="pa-2" v-for="(comment, i) in comments" :key="comment + i * comment">
+            <div class="d-flex justify-space-between">
+              <strong>{{ comment.user.username }}</strong>
+              <button block right>delete</button>
+            </div>
+            <div class="text-body2">piskaapis</div>
+
+            <v-divider></v-divider>
+          </div>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+  </div>
+
+  <!-- <v-card elevation="0" class="">
     <v-row class="pa-4">
       <v-col class="col-2 pa-0">
         <v-btn
@@ -12,16 +55,6 @@
           <v-icon>mdi-heart</v-icon>
           {{ likes.length }}
         </v-btn>
-        <!-- <v-btn
-          class="px-0 mt-7 d-flex justify-space-between"
-          v-else
-          text
-          color="#FFFFFF"
-          @click="like"
-        >
-          <v-icon class="ml-1">mdi-heart</v-icon>
-          {{ likes.length }}
-        </v-btn> -->
       </v-col>
       <v-col class="col-8">
         <v-text-field
@@ -50,9 +83,7 @@
         <v-divider :key="index" :inset="item.inset"></v-divider>
 
         <v-list-item :key="item.title">
-          <!-- <v-list-item-avatar>
-              <v-img :src="item.avatar"></v-img>
-            </v-list-item-avatar> -->
+        
 
           <v-list-item-content class="py-0">
             <v-list-item-subtitle
@@ -63,7 +94,7 @@
         </v-list-item>
       </template>
     </v-list>
-  </v-card>
+  </v-card> -->
 </template>
 
 <script>
@@ -84,7 +115,7 @@ export default {
         liked: false,
       },
       liked: "#E91E63",
-      unliked: "#FFFFFF"
+      unliked: "#FFFFFF",
     };
   },
   computed: {
@@ -120,24 +151,20 @@ export default {
       if (arr.length > 0) {
         this.likeButtonColor.liked = true;
         return arr[0].id;
-
       } else {
         this.likeButtonColor.liked = false;
-    
+
         return false;
       }
-
     },
     async fetchPostsWrap() {
-
       if (this.filtered) {
         await this.searchByCategoryAndTags({
           category: this.category,
           tags: this.tags,
           currPage: 1,
         });
-      }
-      else {
+      } else {
         await this.fetchPosts({});
       }
     },
@@ -148,5 +175,8 @@ export default {
 <style>
 .listItem {
   height: 2em;
+}
+.divHeight {
+  height: 4em;
 }
 </style>

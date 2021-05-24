@@ -52,7 +52,7 @@ export default {
     postData() {
 
       this.register({form: this.form});
-      this.$router.push("/");
+      //this.$router.push("/");
     },
   },
 };

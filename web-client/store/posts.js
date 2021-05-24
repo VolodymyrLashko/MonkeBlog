@@ -91,6 +91,8 @@ export const actions = {
   },
 
   createPost({ dispatch }, { post }) {
+    const JWTToken = localStorage.getItem("token");
+
     this.$axios
       .$post("/posts", post, {
         headers: { Authorization: `Bearer ${JWTToken}` },
