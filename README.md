@@ -9,5 +9,5 @@
 ## пагінація
 ## JSON api + JWT token
 ## heroku
-  ## api - https://protected-hollows-64679.herokuapp.com/posts
+  ## api - https://shrouded-atoll-20121.herokuapp.com/posts
   ## client - https://secure-sea-17134.herokuapp.com/
